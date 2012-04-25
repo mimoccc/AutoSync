@@ -1,6 +1,7 @@
 package app.autosync.models;
 
 import app.autosync.core.AbstractMultipleOperation;
+import app.autosync.core.ParentedOperation;
 import app.autosync.util.StringUtils;
 
 /**
@@ -40,12 +41,17 @@ public final class Batch extends AbstractMultipleOperation {
 		this.title = title;
 		this.interval = interval;
 	}
-	
+
 	public String getTitle() {
 		return title;
 	}
 	
 	public Long getInterval() {
 		return interval;
+	}
+	
+	@Override
+	protected boolean canAddChild(final ParentedOperation child) {
+		return (child.getClass().equals(Sync.class));
 	}
 }

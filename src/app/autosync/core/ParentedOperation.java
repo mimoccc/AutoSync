@@ -8,8 +8,9 @@ package app.autosync.core;
  * @author Matthew Cory
  */
 public interface ParentedOperation extends Operation {
-	
+
+		
 	void setParent(Operation operation);
-	
+
 	Operation getParent(Operation operation);
 }

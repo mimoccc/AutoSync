@@ -1,9 +1,6 @@
 package app.autosync.core;
 
-import java.util.Collections;
 import java.util.List;
-
-import app.autosync.util.StringUtils;
 
 /**
  * Abstract base class for batch operations.
@@ -15,11 +12,9 @@ public abstract class AbstractOperation implements Operation {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public final boolean execute() {
 		hasExecuted = false;
-		errors.clear();
-		exceptions.clear();
+		errorTracker.clear();
 		boolean result = false;
 		try {
 			result = this.doExecute();
@@ -36,49 +31,37 @@ public abstract class AbstractOperation implements Operation {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public final List<String> getErrors() {
 		if (!hasExecuted) {
 			throw new IllegalStateException("This operation has not been executed.");
 		}
 		
-		return Collections.unmodifiableList(errors);
+		return errorTracker.getErrors();
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public final List<Throwable> getExceptions() {
 		if (!hasExecuted) {
 			throw new IllegalStateException("This operation has not been executed.");
 		}
 		
-		return Collections.unmodifiableList(exceptions);
+		return errorTracker.getExceptions();
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public final void addException(final Throwable exception) {
-		if (exception == null) {
-			throw new IllegalArgumentException("Exception must be provided.");
-		}
-		
-		exceptions.add(exception);
+		errorTracker.addException(exception);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public final void addError(final String error) {
-		if (StringUtils.isBlank(error)) {
-			throw new IllegalArgumentException("Error message must be provided.");
-		}
-		
-		errors.add(error);
+		errorTracker.addError(error);
 	}
 	
 	/**
@@ -91,8 +74,7 @@ public abstract class AbstractOperation implements Operation {
 	 */
 	protected abstract boolean doExecute();
 	
-	private final List<Throwable> exceptions = new java.util.ArrayList<Throwable>();
-	private final List<String> errors = new java.util.ArrayList<String>();
+	private final CommonErrorTracker errorTracker = new CommonErrorTracker();
 	
 	private boolean hasExecuted = false;
 }
